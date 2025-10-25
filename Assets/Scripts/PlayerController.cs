@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
@@ -15,13 +16,14 @@ public class PlayerController : MonoBehaviour
     public enum EPlayerState : byte {
         Idle,
         Walking,
-        Traveling,
         Jumping,
+        Traveling,
         Running,
         Turning,
         Dying,
     }
 
+    // End - Enum -
     #endregion
 
     private EPlayerDirection direction = EPlayerDirection.Right;
@@ -57,17 +59,37 @@ public class PlayerController : MonoBehaviour
     // End - States -
     #endregion
 
+    #region - Movement -
+
+    private Vector2 moveInput;
+
+    void OnJump(InputValue jumpVal) {
+        if (jumpVal.isPressed && isGrounded) {
+            state = EPlayerState.Jumping;
+            rb.velocity = new Vector2(rb.velocity.x, 5.0f);
+        }
+    }
+
+    void OnMove(InputValue moveVal) {
+        moveInput = moveVal.Get<Vector2>();
+    }
+
+    // End - Movement -
+    #endregion
+
     private Animator animator;
+    private Rigidbody2D rb;
 
     // Start is called before the first frame update
     void Start()
     {
         animator = GetComponent<Animator>();
+        rb = GetComponent<Rigidbody2D>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        rb.AddForce(moveInput);
     }
 }
