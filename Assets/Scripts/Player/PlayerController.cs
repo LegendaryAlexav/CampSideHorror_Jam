@@ -13,6 +13,8 @@ namespace TarodevController
     [RequireComponent(typeof(Rigidbody2D), typeof(Collider2D))]
     public class PlayerController : MonoBehaviour, IPlayerController
     {
+        private Player player;
+
         [SerializeField] private ScriptableStats _stats;
         private Rigidbody2D _rb;
 
@@ -23,11 +25,14 @@ namespace TarodevController
 
         public bool seeGroundCollision = true;
 
+
         #region Interface
 
         public Vector2 FrameInput => _frameInput.Move;
         public event Action<bool, float> GroundedChanged;
         public event Action Jumped;
+        public event Action Running;
+        public event Action StopRunning;
 
         #endregion
 
@@ -35,6 +40,8 @@ namespace TarodevController
 
         private void Awake()
         {
+            player = GetComponent<Player>();
+
             _rb = GetComponent<Rigidbody2D>();
             _col = GetComponent<CapsuleCollider2D>();
 
@@ -155,6 +162,11 @@ namespace TarodevController
             _bufferedJumpUsable = false;
             _coyoteUsable = false;
             _frameVelocity.y = _stats.JumpPower;
+            player.ApplyStateChange(EPlayerState.Jumping);
+        }
+
+        public void JumpAnim()
+        {
             Jumped?.Invoke();
         }
 
@@ -168,11 +180,32 @@ namespace TarodevController
             {
                 var deceleration = _grounded ? _stats.GroundDeceleration : _stats.AirDeceleration;
                 _frameVelocity.x = Mathf.MoveTowards(_frameVelocity.x, 0, deceleration * Time.fixedDeltaTime);
+                player.ApplyStateChange(EPlayerState.Idle);
             }
             else
             {
                 _frameVelocity.x = Mathf.MoveTowards(_frameVelocity.x, _frameInput.Move.x * _stats.MaxSpeed, _stats.Acceleration * Time.fixedDeltaTime);
+                player.ApplyStateChange(EPlayerState.Running);
             }
+
+
+            if (_frameVelocity.x != 0.0f)
+            {
+            }
+            else
+            {
+            }
+
+        }
+
+        public void IdleAnim()
+        {
+            StopRunning?.Invoke();
+        }
+
+        public void RunAnim()
+        {
+            Running?.Invoke();
         }
 
         #endregion
@@ -216,7 +249,10 @@ namespace TarodevController
     {
         public event Action<bool, float> GroundedChanged;
 
+        // Calling Functions into PlayerAnimator
         public event Action Jumped;
+        public event Action Running;
+        public event Action StopRunning;
         public Vector2 FrameInput { get; }
     }
 }

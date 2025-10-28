@@ -17,6 +17,7 @@ namespace TarodevController
 
         [SerializeField] private float _maxTilt = 5;
         [SerializeField] private float _tiltSpeed = 20;
+        [SerializeField] private float _turnAnimDelay = 0.5f;
 
         [Header("Particles")] [SerializeField] private ParticleSystem _jumpParticles;
         [SerializeField] private ParticleSystem _launchParticles;
@@ -27,35 +28,41 @@ namespace TarodevController
         private AudioClip[] _footsteps;
 
         private AudioSource _source;
-        private IPlayerController _player;
+        private IPlayerController _playerController;
         private bool _grounded;
+        private float _facingDir;
+
         private ParticleSystem.MinMaxGradient _currentGradient;
 
         private void Awake()
         {
             _source = GetComponent<AudioSource>();
-            _player = GetComponentInParent<IPlayerController>();
+            _playerController = GetComponentInParent<IPlayerController>();
         }
 
         private void OnEnable()
         {
-            _player.Jumped += OnJumped;
-            _player.GroundedChanged += OnGroundedChanged;
+            _playerController.Jumped += OnJumped;
+            _playerController.Running += OnStartRunning;
+            _playerController.StopRunning += OnStopRunning;
+            _playerController.GroundedChanged += OnGroundedChanged;
 
             _moveParticles.Play();
         }
 
         private void OnDisable()
         {
-            _player.Jumped -= OnJumped;
-            _player.GroundedChanged -= OnGroundedChanged;
+            _playerController.Jumped -= OnJumped;
+            _playerController.Running -= OnStartRunning;
+            _playerController.StopRunning -= OnStopRunning;
+            _playerController.GroundedChanged -= OnGroundedChanged;
 
             _moveParticles.Stop();
         }
 
         private void Update()
         {
-            if (_player == null) return;
+            if (_playerController == null) return;
 
             DetectGroundColor();
 
@@ -64,31 +71,100 @@ namespace TarodevController
             HandleIdleSpeed();
 
             HandleCharacterTilt();
-        }
 
-        private void HandleSpriteFlip()
-        {
-            if (_player.FrameInput.x != 0) _sprite.flipX = _player.FrameInput.x < 0;
+            HandleCharacterTurning();
+
+            UpdateGrounded();
         }
 
         private void HandleIdleSpeed()
         {
-            var inputStrength = Mathf.Abs(_player.FrameInput.x);
+            // Idle
+            var inputStrength = Mathf.Abs(_playerController.FrameInput.x);
             _anim.SetFloat(IdleSpeedKey, Mathf.Lerp(1, _maxIdleSpeed, inputStrength));
             _moveParticles.transform.localScale = Vector3.MoveTowards(_moveParticles.transform.localScale, Vector3.one * inputStrength, 2 * Time.deltaTime);
+
         }
+
+        #region - Horizontal -
+
+        #region - Turning -
+
+        private bool _canTurnAnim = false; // Enables the turning animation check
+        private bool _turned = false; // The player Turned
+        private float _prevFacingDir = 0.0f; // Remembers the previous direction
+
+        private float _turnAnimTime = 0.0f;
+
+        private void HandleSpriteFlip()
+        {
+            _facingDir = _playerController.FrameInput.x;
+            if (_facingDir != 0) _sprite.flipX = _playerController.FrameInput.x < 0;
+            
+            if(_facingDir != _prevFacingDir)
+            {
+                _prevFacingDir = _facingDir;
+                _turned = true;
+            }
+        }
+
+        private void HandleCharacterTurning()
+        {
+            _turnAnimTime -= Time.deltaTime;
+            if(_turnAnimTime < 0.0f)
+            {
+                _turnAnimTime = 0.0f;
+                _canTurnAnim = false;
+                _anim.ResetTrigger(TurnKey);
+            }
+
+            if (_canTurnAnim && _turned)
+            {
+                _anim.SetTrigger(TurnKey);
+            }
+        }
+
+        // End - Turning -
+        #endregion
+
+
+
+
+        private void OnStopRunning()
+        {
+            _anim.SetTrigger(IdleKey);
+            _anim.ResetTrigger(RunKey);
+            _canTurnAnim = true;
+            _turned = false;
+        }
+
+        private void OnStartRunning()
+        {
+            _anim.SetTrigger(RunKey);
+            _anim.ResetTrigger(IdleKey);
+            if(_turned)
+            {
+                _turnAnimTime = _turnAnimDelay;
+            }
+        }
+
 
         private void HandleCharacterTilt()
         {
-            var runningTilt = _grounded ? Quaternion.Euler(0, 0, _maxTilt * _player.FrameInput.x) : Quaternion.identity;
+            //Debug.Log(_playerController.FrameInput.x);
+            var runningTilt = _grounded ? Quaternion.Euler(0, 0, _maxTilt * -_playerController.FrameInput.x) : Quaternion.identity;
             _anim.transform.up = Vector3.RotateTowards(_anim.transform.up, runningTilt * Vector2.up, _tiltSpeed * Time.deltaTime, 0f);
         }
 
+        // End - Horizontal -
+        #endregion
+
+        #region - Jump/Grounded -
+
         private void OnJumped()
         {
+            // Jump
             _anim.SetTrigger(JumpKey);
-            _anim.ResetTrigger(GroundedKey);
-
 
             if (_grounded) // Avoid coyote
             {
@@ -101,13 +177,12 @@ namespace TarodevController
         private void OnGroundedChanged(bool grounded, float impact)
         {
             _grounded = grounded;
-            
+
             if (grounded)
             {
                 DetectGroundColor();
                 SetColor(_landParticles);
 
-                _anim.SetTrigger(GroundedKey);
                 _source.PlayOneShot(_footsteps[Random.Range(0, _footsteps.Length)]);
                 _moveParticles.Play();
 
@@ -119,6 +194,15 @@ namespace TarodevController
                 _moveParticles.Stop();
             }
         }
+        private void UpdateGrounded()
+        {
+            _anim.SetBool(GroundedKey, _grounded);
+        }
+
+
+        #endregion
+
+        #region - Ground Colour -
 
         private void DetectGroundColor()
         {
@@ -136,9 +220,14 @@ namespace TarodevController
             main.startColor = _currentGradient;
         }
 
+        #endregion
+
+        // Trigger Name
         private static readonly int GroundedKey = Animator.StringToHash("Grounded");
         private static readonly int IdleSpeedKey = Animator.StringToHash("IdleSpeed");
         private static readonly int JumpKey = Animator.StringToHash("Jump");
         private static readonly int RunKey = Animator.StringToHash("Run");
+        private static readonly int IdleKey = Animator.StringToHash("Idle");
+        private static readonly int TurnKey = Animator.StringToHash("Turned");
     }
 }

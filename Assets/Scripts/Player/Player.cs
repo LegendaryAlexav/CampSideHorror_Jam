@@ -1,17 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
+using TarodevController;
 using UnityEngine;
 
 public enum EPlayerState : byte {
     Idle,
-    Walking,
     Running,
-
-}
-
-public enum EPlayerDirection : byte {
-    Right,
-    Left,
+    Jumping,
 }
 
 public class Player : MonoBehaviour
@@ -19,7 +12,6 @@ public class Player : MonoBehaviour
     //private PlayerController playerController;
 
     private EPlayerState state;
-    private EPlayerDirection direction;
 
     [SerializeField]
     private float groundColliderRadius;
@@ -28,16 +20,13 @@ public class Player : MonoBehaviour
     [SerializeField]
     private LayerMask groundLayer;
 
+    private PlayerController playerController;
+
     #region - Getters/Setters -
 
     public EPlayerState State {
         get { return state; }
         set { state = value; }
-    }
-
-    public EPlayerDirection Direction {
-        get { return direction; }
-        set { direction = value; }
     }
 
     public bool IsGrounded {
@@ -49,7 +38,8 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //playerController = GetComponent<PlayerController>();
+        state = EPlayerState.Idle;
+        playerController = GetComponent<PlayerController>();
     }
 
     // Update is called once per frame
@@ -60,6 +50,27 @@ public class Player : MonoBehaviour
 
     private void OnDrawGizmos() {
         Gizmos.DrawWireSphere(transform.position - transform.up * groundColliderCastDistance, groundColliderRadius);
+    }
+
+    public void ApplyStateChange(EPlayerState newState) {
+        if (newState != state)
+        {
+            state = newState;
+            switch (state)
+            {
+                case EPlayerState.Idle:
+                    playerController.IdleAnim();
+                    break;
+                case EPlayerState.Running:
+                    playerController.RunAnim();
+                    break;
+                case EPlayerState.Jumping:
+                    playerController.JumpAnim();
+                    break;
+            }
+
+        }
+
     }
 
 }
