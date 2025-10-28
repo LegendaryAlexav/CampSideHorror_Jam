@@ -5,14 +5,15 @@ TagManager:
   serializedVersion: 2
   tags:
   - Travel
+  - WorldObject
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Player
   - Water
   - UI
-  - 
+  - Ground
   - 
   - 
   - 
