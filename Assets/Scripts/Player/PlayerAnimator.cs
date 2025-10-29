@@ -67,12 +67,11 @@ namespace TarodevController
             DetectGroundColor();
 
             HandleSpriteFlip();
+            HandleCharacterTurning();
 
             HandleIdleSpeed();
 
             HandleCharacterTilt();
-
-            HandleCharacterTurning();
 
             UpdateGrounded();
         }
@@ -111,16 +110,18 @@ namespace TarodevController
         private void HandleCharacterTurning()
         {
             _turnAnimTime -= Time.deltaTime;
+            //Debug.Log(_turnAnimTime);
             if(_turnAnimTime < 0.0f)
             {
                 _turnAnimTime = 0.0f;
                 _canTurnAnim = false;
-                _anim.ResetTrigger(TurnKey);
+                _anim.SetBool(TurnKey, false);
             }
 
             if (_canTurnAnim && _turned)
             {
-                _anim.SetTrigger(TurnKey);
+                _anim.SetBool(TurnKey, true);
+                _turned = false;
             }
         }
 
@@ -228,6 +229,6 @@ namespace TarodevController
         private static readonly int JumpKey = Animator.StringToHash("Jump");
         private static readonly int RunKey = Animator.StringToHash("Run");
         private static readonly int IdleKey = Animator.StringToHash("Idle");
-        private static readonly int TurnKey = Animator.StringToHash("Turned");
+        private static readonly int TurnKey = Animator.StringToHash("Turn");
     }
 }
