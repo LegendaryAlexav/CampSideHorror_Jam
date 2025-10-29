@@ -60,6 +60,7 @@ namespace TarodevController
             {
                 JumpDown = Input.GetButtonDown("Jump") || Input.GetKeyDown(KeyCode.C),
                 JumpHeld = Input.GetButton("Jump") || Input.GetKey(KeyCode.C),
+                DoorPressed = Input.GetKeyDown(KeyCode.X) || Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow),
                 Move = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"))
             };
 
@@ -74,6 +75,8 @@ namespace TarodevController
                 _jumpToConsume = true;
                 _timeJumpWasPressed = _time;
             }
+
+            HandleDoorTeleport();
         }
 
         private void FixedUpdate()
@@ -83,7 +86,7 @@ namespace TarodevController
             HandleJump();
             HandleDirection();
             HandleGravity();
-            
+
             ApplyMovement();
         }
 
@@ -130,8 +133,28 @@ namespace TarodevController
             }
         }
 
+        #region - Door Collision -
+
+        private DoorTeleport currentCollidedDoor = null;
+
+        public void CollideWithDoor(DoorTeleport door)
+        {
+            currentCollidedDoor = door;
+        }
+
+        private void HandleDoorTeleport()
+        {
+            if(_frameInput.DoorPressed && currentCollidedDoor != null)
+            {
+                GameObject teleportDoor = currentCollidedDoor.GetLinkedDoor();
+            }
+        }
+
+        // End - Door Collision -
         #endregion
 
+        // End - Collision -
+        #endregion
 
         #region Jumping
 
@@ -242,6 +265,7 @@ namespace TarodevController
     {
         public bool JumpDown;
         public bool JumpHeld;
+        public bool DoorPressed;
         public Vector2 Move;
     }
 
