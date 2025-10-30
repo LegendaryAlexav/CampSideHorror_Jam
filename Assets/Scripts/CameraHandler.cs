@@ -12,11 +12,12 @@ public class CameraHandler : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Assert.IsNull(confiner2D);
+        Assert.IsNotNull(confiner2D);
     }
     
     public void ChangeConfinerCollider(PolygonCollider2D newConfinerCollider)
     {
         confiner2D.m_BoundingShape2D = newConfinerCollider;
+        confiner2D.transform.position = newConfinerCollider.transform.position;
     }
 }

@@ -183,8 +183,8 @@ namespace TarodevController
             {
                 DetectGroundColor();
                 SetColor(_landParticles);
-
-                _source.PlayOneShot(_footsteps[Random.Range(0, _footsteps.Length)]);
+                if(_footsteps.Length > 0)
+                    _source.PlayOneShot(_footsteps[Random.Range(0, _footsteps.Length)]);
                 _moveParticles.Play();
 
                 _landParticles.transform.localScale = Vector3.one * Mathf.InverseLerp(0, 40, impact);

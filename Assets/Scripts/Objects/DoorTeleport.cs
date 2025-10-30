@@ -6,22 +6,44 @@ using UnityEngine.Assertions;
 
 public class DoorTeleport : MonoBehaviour
 {
-    [SerializeField] private DoorTeleport LinkedDoor;
-    [SerializeField] private PolygonCollider2D CameraConfiner2D;
+    [SerializeField] protected DoorTeleport LinkedDoor;
+    [SerializeField] protected PolygonCollider2D CameraConfiner2D;
 
-    private void Start()
+    public bool isSnowyEntrance = false;
+
+    private void Awake()
     {
-        Assert.IsNull(LinkedDoor); // Door not Linked
-        Assert.IsNull(CameraConfiner2D); // Camera Bounding Box Not Linked
-        Assert.IsTrue(LinkedDoor == this); // Can't Set Linked Door as This Door
+        GameObject cameraConfinerObject = FindGameObjectInChildWithTag(transform.parent.gameObject, "CameraBoundingBox");
+        if (cameraConfinerObject != null)
+        {
+            CameraConfiner2D = cameraConfinerObject.GetComponent<PolygonCollider2D>();
+        }
+    }
+
+    public static GameObject FindGameObjectInChildWithTag(GameObject parent, string tag)
+    {
+        Transform t = parent.transform;
+
+        for (int i = 0; i < t.childCount; i++)
+        {
+            if (t.GetChild(i).gameObject.tag == tag)
+            {
+                return t.GetChild(i).gameObject;
+            }
+
+        }
+
+        return null;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Player"))
         {
-            PlayerController player = collision.GetComponent<PlayerController>();
-            player.CollideWithDoor(this);
+            Player player = collision.GetComponent<Player>();
+            player.GetComponent<PlayerController>().CollideWithDoor(this);
+
+            player.EnableMonster(isSnowyEntrance);
         }
     }
 
@@ -30,7 +52,7 @@ public class DoorTeleport : MonoBehaviour
         if (collision.CompareTag("Player"))
         {
             PlayerController player = collision.GetComponent<PlayerController>();
-            player.CollideWithDoor(null);
+            player.GetComponent<PlayerController>().CollideWithDoor(null);
         }
     }
 

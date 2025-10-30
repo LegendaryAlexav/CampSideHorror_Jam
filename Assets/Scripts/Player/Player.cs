@@ -21,7 +21,12 @@ public class Player : MonoBehaviour
     private LayerMask groundLayer;
 
     private PlayerController playerController;
+    [SerializeField] private GameObject transitionToNextMap;
     [SerializeField] private CameraHandler cameraHandler;
+    [SerializeField] private PortalHandler portalHandler;
+    [SerializeField] private MonsterHandler monsterHandler;
+
+    private int itemsCollected = 0;
 
     #region - Getters/Setters -
 
@@ -41,6 +46,7 @@ public class Player : MonoBehaviour
     {
         state = EPlayerState.Idle;
         playerController = GetComponent<PlayerController>();
+
     }
 
     // Update is called once per frame
@@ -56,6 +62,49 @@ public class Player : MonoBehaviour
     public void SetNewCameraBoundry(PolygonCollider2D collider)
     {
         cameraHandler.ChangeConfinerCollider(collider);
+    }
+
+    public void PlayTransition()
+    {
+        transitionToNextMap.GetComponent<Animator>().Play("CutToNextMap");
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Collectable"))
+        {
+            collision.gameObject.SetActive(false);
+            itemsCollected++;
+
+            // Calculate Door Index
+            int doorIndex = itemsCollected;
+            if (doorIndex <= 1)
+            {
+                doorIndex = 0;
+            }
+            else if (doorIndex >= 2 && doorIndex <= 3)
+            {
+                doorIndex = 1;
+            }
+            else if(doorIndex <= 4)
+            {
+                doorIndex = 2;
+            }
+
+            // Calculate Monster Index
+            int monsterIndex = 0;
+            if (itemsCollected > 1) {
+                monsterIndex = 1;
+            }
+
+            monsterHandler.SetMonsterType(monsterIndex);
+            portalHandler.SetPortalSprite(doorIndex);
+        }
+    }
+
+    public void EnableMonster(bool enable)
+    {
+        monsterHandler.SetMonsterEnable(enable);
     }
 
     public void ApplyStateChange(EPlayerState newState) {

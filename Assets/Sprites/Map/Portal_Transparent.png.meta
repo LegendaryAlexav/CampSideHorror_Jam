@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: c997307c8a5878c408f0e86a1a57c40f
+guid: e21b19d31c5dc2c4887d1615df4da25e
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -110,22 +110,64 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Portal_0
+      name: Portal_Transparent_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 2160
-        height: 1174
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 83
+        y: 95
+        width: 405
+        height: 741
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: d29e9d73a9077154d976ca113c515bc2
-      internalID: 245438433
+      spriteID: 4b7e82fc48bd95c44b7502ea34967cf1
+      internalID: 1983299271
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Portal_Transparent_1
+      rect:
+        serializedVersion: 2
+        x: 544
+        y: 94
+        width: 393
+        height: 745
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1f9a7abd8cd8ed348bb27038aac1476a
+      internalID: -1343804897
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Portal_Transparent_5
+      rect:
+        serializedVersion: 2
+        x: 1254
+        y: 19
+        width: 788
+        height: 1056
+      alignment: 9
+      pivot: {x: 0.5, y: 0.08}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e002564da8bbce240815261c5f266d29
+      internalID: -1543810583
       vertices: []
       indices: 
       edges: []
@@ -141,7 +183,16 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      Portal_0: 245438433
+      Portal_Transparent_0: 1983299271
+      Portal_Transparent_1: -1343804897
+      Portal_Transparent_2: 708270066
+      Portal_Transparent_3: 1730924634
+      Portal_Transparent_4: -626976649
+      Portal_Transparent_5: -1543810583
+      Portal_Transparent_6: -1990593225
+      Portal_Transparent_7: 247342044
+      Portal_Transparent_8: -2039319594
+      Portal_Transparent_9: -1703058631
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

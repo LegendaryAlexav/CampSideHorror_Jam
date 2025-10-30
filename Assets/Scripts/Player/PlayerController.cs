@@ -1,4 +1,5 @@
 using System;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace TarodevController
@@ -61,6 +62,7 @@ namespace TarodevController
                 JumpDown = Input.GetButtonDown("Jump") || Input.GetKeyDown(KeyCode.C),
                 JumpHeld = Input.GetButton("Jump") || Input.GetKey(KeyCode.C),
                 DoorPressed = Input.GetKeyDown(KeyCode.X) || Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow),
+                Leave = Input.GetKeyDown(KeyCode.Escape),
                 Move = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"))
             };
 
@@ -74,6 +76,11 @@ namespace TarodevController
             {
                 _jumpToConsume = true;
                 _timeJumpWasPressed = _time;
+            }
+
+            if(_frameInput.Leave)
+            {
+                Application.Quit();
             }
 
             HandleDoorTeleport();
@@ -152,6 +159,7 @@ namespace TarodevController
                 transform.position = teleportDoorPos;
 
                 player.SetNewCameraBoundry(otherDoor.GetCameraCollider());
+                player.PlayTransition();
             }
         }
 
@@ -271,6 +279,7 @@ namespace TarodevController
         public bool JumpDown;
         public bool JumpHeld;
         public bool DoorPressed;
+        public bool Leave;
         public Vector2 Move;
     }
 

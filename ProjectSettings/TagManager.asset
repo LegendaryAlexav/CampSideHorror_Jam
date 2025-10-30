@@ -7,6 +7,8 @@ TagManager:
   - Travel
   - WorldObject
   - Background
+  - CameraBoundingBox
+  - Collectable
   layers:
   - Default
   - TransparentFX
