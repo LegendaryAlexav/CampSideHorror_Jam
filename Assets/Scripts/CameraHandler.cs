@@ -10,7 +10,7 @@ public class CameraHandler : MonoBehaviour
     [SerializeField] private CinemachineConfiner2D confiner2D;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         Assert.IsNotNull(confiner2D);
     }

@@ -13,30 +13,19 @@ public class Player : MonoBehaviour
 
     private EPlayerState state;
 
-    [SerializeField]
-    private float groundColliderRadius;
-    [SerializeField]
-    private float groundColliderCastDistance;
-    [SerializeField]
-    private LayerMask groundLayer;
-
     private PlayerController playerController;
     [SerializeField] private GameObject transitionToNextMap;
     [SerializeField] private CameraHandler cameraHandler;
     [SerializeField] private PortalHandler portalHandler;
     [SerializeField] private MonsterHandler monsterHandler;
 
-    private int itemsCollected = 0;
+    [SerializeField] private int itemsCollected = 0;
 
     #region - Getters/Setters -
 
     public EPlayerState State {
         get { return state; }
         set { state = value; }
-    }
-
-    public bool IsGrounded {
-        get { return Physics2D.CircleCast(transform.position, groundColliderRadius, -transform.up, groundColliderCastDistance, groundLayer); }
     }
 
     #endregion
@@ -47,16 +36,6 @@ public class Player : MonoBehaviour
         state = EPlayerState.Idle;
         playerController = GetComponent<PlayerController>();
 
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
-    private void OnDrawGizmos() {
-        Gizmos.DrawWireSphere(transform.position - transform.up * groundColliderCastDistance, groundColliderRadius);
     }
 
     public void SetNewCameraBoundry(PolygonCollider2D collider)

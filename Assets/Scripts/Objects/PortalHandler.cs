@@ -11,8 +11,8 @@ public class PortalHandler : DoorTeleport
 
     public void SetPortalSprite(int portalIndex)
     {
-        Sprite currentSprite = GetComponent<SpriteRenderer>().sprite;
-        currentSprite = listSprites[portalIndex];
+        SpriteRenderer spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
+        spriteRenderer.sprite = listSprites[portalIndex];
         if(portalIndex == 2)
         {
             LinkedDoor = finalDoor;

@@ -160,6 +160,8 @@ namespace TarodevController
 
                 player.SetNewCameraBoundry(otherDoor.GetCameraCollider());
                 player.PlayTransition();
+
+                player.EnableMonster(currentCollidedDoor.isSnowyEntrance);
             }
         }
 

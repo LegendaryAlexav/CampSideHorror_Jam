@@ -43,7 +43,8 @@ public class DoorTeleport : MonoBehaviour
             Player player = collision.GetComponent<Player>();
             player.GetComponent<PlayerController>().CollideWithDoor(this);
 
-            player.EnableMonster(isSnowyEntrance);
+            if(!isSnowyEntrance) // Disable when touching Portal
+                player.EnableMonster(false);
         }
     }
 

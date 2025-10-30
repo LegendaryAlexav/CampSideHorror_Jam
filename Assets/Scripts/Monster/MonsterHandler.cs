@@ -13,12 +13,12 @@ public class MonsterHandler : MonoBehaviour
 
     public void SetMonsterType(int index)
     {
-        Sprite currentSprite = monster.GetComponent<SpriteRenderer>().sprite;
-        currentSprite = listSprites[index];
+        SpriteRenderer currentSprite = monster.GetComponent<SpriteRenderer>();
+        currentSprite.sprite = listSprites[index];
     }
 
     public void SetMonsterEnable(bool enable)
     {
-        monster.SetActive(enable);
+        monster.GetComponent<SpriteRenderer>().enabled = enable;
     }
 }

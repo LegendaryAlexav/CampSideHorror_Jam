@@ -52,3 +52,6 @@ TagManager:
   - name: Player
     uniqueID: 18818981
     locked: 0
+  - name: Overlay
+    uniqueID: 1259661821
+    locked: 0
