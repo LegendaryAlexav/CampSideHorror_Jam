@@ -2,18 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using TarodevController;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 public class DoorTeleport : MonoBehaviour
 {
-    [SerializeField] DoorTeleport LinkedDoor;
-
-    private Transform teleportPoint;
+    [SerializeField] private DoorTeleport LinkedDoor;
+    [SerializeField] private PolygonCollider2D CameraConfiner2D;
 
     private void Start()
     {
-        if (LinkedDoor == null)
-            return;
-        teleportPoint = GetComponent<GameObject>().transform;
+        Assert.IsNull(LinkedDoor); // Door not Linked
+        Assert.IsNull(CameraConfiner2D); // Camera Bounding Box Not Linked
+        Assert.IsTrue(LinkedDoor == this); // Can't Set Linked Door as This Door
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -34,9 +34,14 @@ public class DoorTeleport : MonoBehaviour
         }
     }
 
-    public GameObject GetLinkedDoor()
+    public DoorTeleport GetLinkedDoor()
     {
-        return LinkedDoor.gameObject;
+        return LinkedDoor;
+    }
+
+    public PolygonCollider2D GetCameraCollider()
+    {
+        return CameraConfiner2D;
     }
     
 }

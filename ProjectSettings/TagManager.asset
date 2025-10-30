@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Travel
   - WorldObject
+  - Background
   layers:
   - Default
   - TransparentFX
@@ -42,4 +43,10 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Objects
+    uniqueID: 593965475
+    locked: 0
+  - name: Player
+    uniqueID: 18818981
     locked: 0

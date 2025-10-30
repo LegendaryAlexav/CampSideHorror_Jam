@@ -21,6 +21,7 @@ public class Player : MonoBehaviour
     private LayerMask groundLayer;
 
     private PlayerController playerController;
+    [SerializeField] private CameraHandler cameraHandler;
 
     #region - Getters/Setters -
 
@@ -50,6 +51,11 @@ public class Player : MonoBehaviour
 
     private void OnDrawGizmos() {
         Gizmos.DrawWireSphere(transform.position - transform.up * groundColliderCastDistance, groundColliderRadius);
+    }
+
+    public void SetNewCameraBoundry(PolygonCollider2D collider)
+    {
+        cameraHandler.ChangeConfinerCollider(collider);
     }
 
     public void ApplyStateChange(EPlayerState newState) {

@@ -129,7 +129,7 @@ namespace TarodevController
         private void OnDrawGizmos() {
             Gizmos.color = new Color(0, 1, 0);
             if(seeGroundCollision) {
-                Gizmos.DrawSphere(new Vector2(_col.bounds.center.x, _col.bounds.center.y * _stats.GrounderDistance), _col.size.x/ 2.0f);
+                Gizmos.DrawSphere(new Vector2(_col.bounds.center.x, _col.bounds.center.y - _stats.GrounderDistance), _col.size.x/ 2.0f);
             }
         }
 
@@ -146,7 +146,12 @@ namespace TarodevController
         {
             if(_frameInput.DoorPressed && currentCollidedDoor != null)
             {
-                GameObject teleportDoor = currentCollidedDoor.GetLinkedDoor();
+                DoorTeleport otherDoor = currentCollidedDoor.GetLinkedDoor();
+
+                Vector3 teleportDoorPos = otherDoor.gameObject.transform.position;
+                transform.position = teleportDoorPos;
+
+                player.SetNewCameraBoundry(otherDoor.GetCameraCollider());
             }
         }
 
